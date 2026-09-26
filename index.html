@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>LIC पॉलिसी CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --theme:#1B3A6B;
+  --theme-dark:#12294d;
+  --gold:#C89B3C;
+  --bg:#F5F6FA;
+  --card:#FFFFFF;
+  --ink:#1B2430;
+  --muted:#6b7686;
+  --line:#E4E7ED;
+  --danger:#C0392B;
+  --ok:#1E8E5A;
+  --warn:#B8860B;
+  --radius:14px;
+  font-size:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans Devanagari","Inter",system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;}
+body{padding-bottom:78px; min-height:100vh;}
+h1,h2,h3{margin:0 0 8px;font-weight:700;letter-spacing:-0.01em}
+p{margin:0 0 8px;line-height:1.5}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit;font-size:15px}
+
+/* ---------- Top bar ---------- */
+#topbar{
+  position:sticky;top:0;z-index:20;
+  background:linear-gradient(135deg,var(--theme),var(--theme-dark));
+  color:#fff; padding:14px 16px; display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+#topbar .brand{display:flex;align-items:center;gap:10px}
+#topbar .brand-badge{
+  width:34px;height:34px;border-radius:9px;background:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--theme-dark);font-size:13px;
+}
+#topbar h1{font-size:17px;color:#fff;margin:0}
+#topbar .sub{font-size:11px;color:#cfd9ec;margin:0}
+#langToggle{
+  background:rgba(255,255,255,.15); color:#fff; padding:7px 12px; border-radius:20px;
+  font-size:13px; font-weight:600; display:flex; gap:6px; align-items:center;
+}
+#langToggle:active{background:rgba(255,255,255,.3)}
+
+/* ---------- Layout ---------- */
+main{max-width:560px;margin:0 auto;padding:16px}
+.screen{display:none}
+.screen.active{display:block}
+.card{
+  background:var(--card); border-radius:var(--radius); padding:16px;
+  box-shadow:0 1px 3px rgba(20,30,60,.06), 0 1px 2px rgba(20,30,60,.04);
+  border:1px solid var(--line); margin-bottom:14px;
+}
+.card h2{font-size:16px}
+.muted{color:var(--muted); font-size:13px}
+.label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:10px 0 4px}
+.field{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.field:focus{outline:none;border-color:var(--theme)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 16px;border-radius:11px;font-weight:700;font-size:14.5px;width:100%;
+}
+.btn-primary{background:var(--theme);color:#fff}
+.btn-primary:active{background:var(--theme-dark)}
+.btn-gold{background:var(--gold);color:#3a2c05}
+.btn-outline{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+.btn-outline:active{background:var(--bg)}
+.btn-sm{width:auto;padding:8px 12px;font-size:13px;border-radius:9px}
+.btn-danger{background:#fdeceb;color:var(--danger)}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700}
+.pill-ok{background:#e5f7ee;color:var(--ok)}
+.pill-warn{background:#fdf3e0;color:var(--warn)}
+.pill-off{background:#f0f1f4;color:var(--muted)}
+.hidden{display:none !important}
+
+/* photo upload circles */
+.photo-pick{display:flex;align-items:center;gap:12px;margin:8px 0}
+.photo-circle{
+  width:64px;height:64px;border-radius:50%;background:var(--bg);border:1.5px dashed var(--line);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:var(--muted);font-size:11px;text-align:center;
+}
+.photo-circle img{width:100%;height:100%;object-fit:cover}
+.theme-swatches{display:flex;gap:10px;margin:8px 0;flex-wrap:wrap}
+.swatch{width:34px;height:34px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.swatch.selected{border-color:var(--ink)}
+
+/* policy list items */
+.plist-item{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  padding:12px 4px; border-bottom:1px solid var(--line);
+}
+.plist-item:last-child{border-bottom:none}
+.plist-name{font-weight:700;font-size:14.5px}
+.plist-meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.plist-amt{font-weight:700;font-size:13.5px;color:var(--theme);white-space:nowrap}
+.search-box{display:flex;gap:8px;margin-bottom:10px}
+.reminder-card{border-left:4px solid var(--gold)}
+.reminder-card.overdue{border-left-color:var(--danger)}
+.reminder-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.reminder-actions .btn{width:auto;flex:1;min-width:120px}
+
+/* bottom nav */
+#bottomnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:30;
+  background:#fff;border-top:1px solid var(--line);
+  display:flex; box-shadow:0 -2px 10px rgba(20,30,60,.06);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+#bottomnav.hidden{display:none}
+.navbtn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:9px 0 8px;color:var(--muted);font-size:11px;font-weight:600;
+}
+.navbtn .ic{font-size:20px;line-height:1}
+.navbtn.active{color:var(--theme)}
+
+/* empty state */
+.empty{text-align:center;padding:30px 10px;color:var(--muted)}
+.empty .ic{font-size:36px;margin-bottom:8px}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(15,20,35,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.modal-bg.hidden{display:none}
+.modal{background:#fff;border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:560px;max-height:85vh;overflow:auto}
+.modal-handle{width:40px;height:4px;background:var(--line);border-radius:3px;margin:0 auto 12px}
+
+.badge-lic{
+  display:inline-flex;align-items:center;gap:6px;background:#fff;border-radius:8px;padding:4px 8px;
+}
+.badge-lic .shield{width:22px;height:22px}
+
+table.simple{width:100%;border-collapse:collapse;font-size:13px}
+table.simple th,table.simple td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+.toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);
+  background:#1B2430;color:#fff;padding:10px 18px;border-radius:30px;font-size:13.5px;
+  z-index:60;box-shadow:0 4px 14px rgba(0,0,0,.25); opacity:0; transition:opacity .25s;
+  max-width:90%; text-align:center;
+}
+.toast.show{opacity:1}
+.wa-choice{display:flex;gap:10px;margin:8px 0}
+.wa-choice label{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:10px;text-align:center;font-size:13px;font-weight:600}
+.wa-choice input{display:none}
+.wa-choice input:checked + span{color:var(--theme)}
+.wa-choice label:has(input:checked){border-color:var(--theme);background:#eef2fa}
+.mismatch-row{padding:8px;border-radius:8px;background:#fdf3e0;margin-bottom:6px;font-size:12.5px}
+.match-summary{font-size:13px;margin-bottom:8px}
+#dropZone{border:2px dashed var(--line);border-radius:12px;padding:22px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="brand">
+    <div class="brand-badge">LIC</div>
+    <div>
+      <h1 data-i18n="appTitle">पॉलिसी CRM</h1>
+      <p class="sub" id="agentHeaderName"></p>
+    </div>
+  </div>
+  <button id="langToggle" onclick="toggleLang()">🌐 <span id="langLabel">EN</span></button>
+</div>
+
+<main>
+
+  <!-- ============ REGISTRATION SCREEN ============ -->
+  <section class="screen" id="screen-register">
+    <div class="card">
+      <h2 data-i18n="regTitle">एजंट रजिस्ट्रेशन</h2>
+      <p class="muted" data-i18n="regSub">फक्त एकदाच भरा — ब्रँडिंग व रिमाइंडरसाठी वापरले जाईल.</p>
+
+      <label class="label" data-i18n="fName">तुमचे पूर्ण नाव *</label>
+      <input class="field" id="r_name" placeholder="उदा. नविन पराख">
+
+      <label class="label" data-i18n="fMobile">मोबाईल / WhatsApp नंबर *</label>
+      <input class="field" id="r_mobile" placeholder="10 अंकी मोबाईल नंबर" maxlength="10" inputmode="numeric">
+
+      <label class="label" data-i18n="fAgentCode">LIC एजन्सी कोड *</label>
+      <input class="field" id="r_agentcode" placeholder="उदा. 1088995L">
+
+      <label class="label" data-i18n="fTagline">टॅगलाइन / घोषवाक्य</label>
+      <input class="field" id="r_tagline" placeholder="उदा. तुमचा विश्वासू LIC सल्लागार">
+
+      <div class="photo-pick">
+        <div class="photo-circle" id="r_photoPreview">📷</div>
+        <div style="flex:1">
+          <label class="label" style="margin-top:0" data-i18n="fPhoto">तुमचा फोटो</label>
+          <input type="file" accept="image/*" id="r_photoFile" onchange="handlePhotoPick('r_photoFile','r_photoPreview')">
+        </div>
+      </div>
+
+      <div class="photo-pick">
+        <div class="photo-circle" id="r_logoPreview">🏢</div>
+        <div style="flex:1">
+          <label class="label" style="margin-top:0" data-i18n="fLogo">एजन्सी लोगो (असल्यास)</label>
+          <input type="file" accept="image/*" id="r_logoFile" onchange="handlePhotoPick('r_logoFile','r_logoPreview')">
+        </div>
+      </div>
+
+      <label class="label" data-i18n="fTheme">थीम कलर निवडा</label>
+      <div class="theme-swatches" id="r_themeSwatches"></div>
+
+      <button class="btn btn-primary" style="margin-top:14px" onclick="submitRegistration()" data-i18n="btnRegister">रजिस्ट्रेशन पूर्ण करा</button>
+      <p class="muted" style="margin-top:8px;font-size:12px" data-i18n="regNote">सबमिट केल्यावर WhatsApp उघडेल — तो मेसेज पाठवायला विसरू नका, त्यामुळे CRM मालकाला कळेल की तुम्ही जॉईन झालात.</p>
+    </div>
+  </section>
+
+  <!-- ============ HOME (REMINDERS) ============ -->
+  <section class="screen" id="screen-home">
+    <div class="card">
+      <h2 data-i18n="homeTitle">🔔 आजचे रिमाइंडर</h2>
+      <p class="muted" id="homeSummary"></p>
+    </div>
+    <div id="reminderList"></div>
+  </section>
+
+  <!-- ============ POLICY LIST ============ -->
+  <section class="screen" id="screen-list">
+    <div class="card">
+      <h2 data-i18n="listTitle">📋 पॉलिसी यादी</h2>
+      <div class="search-box">
+        <input class="field" id="searchBox" placeholder="नाव / पॉलिसी नंबर शोधा" oninput="renderList()">
+        <select class="field" id="statusFilter" style="width:120px" onchange="renderList()">
+          <option value="" data-i18n="fltAll">सर्व</option>
+        </select>
+      </div>
+      <p class="muted" id="listCount"></p>
+    </div>
+    <div id="policyListWrap"></div>
+  </section>
+
+  <!-- ============ ADD POLICY ============ -->
+  <section class="screen" id="screen-add">
+    <div class="card">
+      <h2 data-i18n="addTitle">➕ नवीन पॉलिसी</h2>
+
+      <label class="label" data-i18n="fPHName">पॉलिसीधारकाचे नाव *</label>
+      <input class="field" id="a_name">
+
+      <label class="label" data-i18n="fPHMobile">मोबाईल नंबर</label>
+      <input class="field" id="a_mobile" maxlength="10" inputmode="numeric">
+
+      <label class="label" data-i18n="fPolicyNo">Policy No *</label>
+      <input class="field" id="a_policyNo" inputmode="numeric">
+
+      <div class="row2">
+        <div>
+          <label class="label" data-i18n="fDOC">DOC (सुरुवात तारीख) *</label>
+          <input class="field" type="date" id="a_doc">
+        </div>
+        <div>
+          <label class="label" data-i18n="fMode">Mode *</label>
+          <select class="field" id="a_mode">
+            <option value="YLY">YLY</option>
+            <option value="HLY">HLY</option>
+            <option value="QLY">QLY</option>
+            <option value="MLY">MLY</option>
+            <option value="SGL">SGL</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="label" data-i18n="fPlanTerm">Plan/Term/PPT</label>
+      <input class="field" id="a_planTerm" placeholder="उदा. 736/25/16">
+
+      <div class="row2">
+        <div>
+          <label class="label" data-i18n="fPremium">Premium *</label>
+          <input class="field" id="a_premium" inputmode="numeric">
+        </div>
+        <div>
+          <label class="label" data-i18n="fSA">Sum Assured</label>
+          <input class="field" id="a_sa" inputmode="numeric">
+        </div>
+      </div>
+
+      <label class="label" data-i18n="fStatus">Status *</label>
+      <select class="field" id="a_status">
+        <option>In Force</option>
+        <option>Lapsed without Surrender Value</option>
+        <option>Reduced Paid-up</option>
+        <option>Fully Paid-up</option>
+        <option>Surrendered</option>
+        <option>Foreclosed</option>
+        <option>Matured</option>
+        <option>Death Claim</option>
+        <option>Single Premium</option>
+      </select>
+
+      <button class="btn btn-primary" style="margin-top:14px" onclick="submitAddPolicy()" data-i18n="btnSave">पॉलिसी सेव्ह करा</button>
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section class="screen" id="screen-settings">
+
+    <div class="card">
+      <h2 data-i18n="setBranding">🏷️ ब्रँडिंग</h2>
+      <label class="label" data-i18n="fName">नाव</label>
+      <input class="field" id="s_name">
+      <label class="label" data-i18n="fMobile">मोबाईल</label>
+      <input class="field" id="s_mobile" maxlength="10" inputmode="numeric">
+      <label class="label" data-i18n="fAgentCode">एजन्सी कोड</label>
+      <input class="field" id="s_agentcode">
+      <label class="label" data-i18n="fTagline">टॅगलाइन</label>
+      <input class="field" id="s_tagline">
+
+      <div class="photo-pick">
+        <div class="photo-circle" id="s_photoPreview">📷</div>
+        <div style="flex:1">
+          <label class="label" style="margin-top:0" data-i18n="fPhoto">फोटो बदला</label>
+          <input type="file" accept="image/*" id="s_photoFile" onchange="handlePhotoPick('s_photoFile','s_photoPreview')">
+        </div>
+      </div>
+      <div class="photo-pick">
+        <div class="photo-circle" id="s_logoPreview">🏢</div>
+        <div style="flex:1">
+          <label class="label" style="margin-top:0" data-i18n="fLogo">लोगो बदला</label>
+          <input type="file" accept="image/*" id="s_logoFile" onchange="handlePhotoPick('s_logoFile','s_logoPreview')">
+        </div>
+      </div>
+      <div class="photo-pick">
+        <div class="photo-circle" id="s_liclogoPreview">🛡️</div>
+        <div style="flex:1">
+          <label class="label" style="margin-top:0" data-i18n="fLicLogo">LIC लोगो इमेज (ऐच्छिक)</label>
+          <input type="file" accept="image/*" id="s_liclogoFile" onchange="handlePhotoPick('s_liclogoFile','s_liclogoPreview')">
+        </div>
+      </div>
+      <label class="label" data-i18n="fTheme">थीम कलर</label>
+      <div class="theme-swatches" id="s_themeSwatches"></div>
+      <button class="btn btn-outline" style="margin-top:10px" onclick="saveSettingsBranding()" data-i18n="btnSaveSettings">ब्रँडिंग सेव्ह करा</button>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="setWA">💬 WhatsApp निवड</h2>
+      <div class="wa-choice">
+        <label><input type="radio" name="waApp" value="normal" onchange="setWaApp('normal')"><span data-i18n="waNormal">साधे WhatsApp</span></label>
+        <label><input type="radio" name="waApp" value="business" onchange="setWaApp('business')"><span data-i18n="waBusiness">WhatsApp Business</span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="setPdf">📄 PDF डेटा अपलोड</h2>
+      <p class="muted" data-i18n="pdfNote">Commission Bill अपलोड केल्यास प्रीमियम भरल्याप्रमाणे पुढची Due Date सेट होईल. Premium Due List फक्त पडताळणीसाठी वापरली जाईल.</p>
+      <label class="label" data-i18n="btnUploadCommission">Commission Bill अपलोड करा</label>
+      <input type="file" accept="application/pdf" id="commissionFile" onchange="handleCommissionUpload(event)">
+      <label class="label" style="margin-top:14px" data-i18n="btnUploadDueList">Premium Due List अपलोड करा (क्रॉस-व्हेरिफिकेशन)</label>
+      <input type="file" accept="application/pdf" id="dueListFile" onchange="handleDueListUpload(event)">
+      <div id="pdfStatus" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="setBackup">💾 बॅकअप / रिस्टोर</h2>
+      <p class="muted" data-i18n="backupNote">डेटा या फोनवरच साठवला जातो. बॅकअप घेतल्यास तो Google Drive मध्ये सेव्ह करा; नवीन फोनवर Restore करून परत मिळेल.</p>
+      <button class="btn btn-gold" onclick="downloadBackup()" style="margin-bottom:8px" data-i18n="btnBackup">⬇️ बॅकअप डाउनलोड करा</button>
+      <label class="label" data-i18n="btnRestore">बॅकअप फाईल Restore करा</label>
+      <input type="file" accept="application/json" id="restoreFile" onchange="handleRestore(event)">
+    </div>
+  </section>
+
+</main>
+
+<nav id="bottomnav" class="hidden">
+  <button class="navbtn" data-screen="home" onclick="goScreen('home')"><span class="ic">🏠</span><span data-i18n="navHome">होम</span></button>
+  <button class="navbtn" data-screen="list" onclick="goScreen('list')"><span class="ic">📋</span><span data-i18n="navList">यादी</span></button>
+  <button class="navbtn" data-screen="add" onclick="goScreen('add')"><span class="ic">➕</span><span data-i18n="navAdd">नवीन</span></button>
+  <button class="navbtn" data-screen="settings" onclick="goScreen('settings')"><span class="ic">⚙️</span><span data-i18n="navSettings">सेटिंग्ज</span></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-bg hidden" id="posterModalBg" onclick="if(event.target===this) closePosterModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 data-i18n="posterTitle">रिमाइंडर इमेज</h2>
+    <canvas id="posterCanvas" width="1080" height="1350" style="width:100%;border-radius:10px;border:1px solid var(--line)"></canvas>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn btn-outline" onclick="closePosterModal()" data-i18n="btnClose">बंद करा</button>
+      <button class="btn btn-primary" id="posterSendBtn" data-i18n="btnDownloadSend">डाउनलोड + WhatsApp पाठवा</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+/* =========================================================
+   ⚠️ हा नंबर बदला — नवीन एजंट रजिस्टर झाल्यावर मेसेज इथे जाईल
+   ========================================================= */
+const ADMIN_WHATSAPP_NUMBER = "919158858885";
+
+const SEED_POLICIES = [{"policyNo":"966270407","name":"Rakesh Laxman Balwadkar","mobile":"8888984141","doc":"2026-04-13","dueDate":"2027-04-13","planTerm":"955/30/20","mode":"YLY","premium":32370,"sa":6000000,"status":"In Force"},{"policyNo":"966269069","name":"Atharva Jaiprakash Giramkar","mobile":"9021089395","doc":"2026-02-19","dueDate":"2027-02-19","planTerm":"745/79/15","mode":"YLY","premium":53243,"sa":650000,"status":"In Force"},{"policyNo":"966267504","name":"Narsingh Vitthalrao Ranmalle","mobile":"9922999998","doc":"2025-11-25","dueDate":"2026-11-25","planTerm":"955/24/19","mode":"YLY","premium":74829,"sa":16000000,"status":"In Force"},{"policyNo":"966267855","name":"Shreetik Akash Sutar","mobile":"9767700070","doc":"2025-11-24","dueDate":"2026-11-24","planTerm":"734/23/18","mode":"YLY","premium":94216,"sa":1800000,"status":"In Force"},{"policyNo":"966267487","name":"NAGESH","mobile":"8296318890","doc":"2025-11-22","dueDate":"2026-07-22","planTerm":"736/25/16","mode":"MLY","premium":1300,"sa":300000,"status":"In Force"},{"policyNo":"966267375","name":"SNEHA SWAPNIL BORA","mobile":"8149602770","doc":"2025-11-02","dueDate":"2026-07-02","planTerm":"736/25/16","mode":"MLY","premium":3954,"sa":925000,"status":"In Force"},{"policyNo":"942182588","name":"AKSHAY VIJAYCHAND BORA","mobile":"9503927976","doc":"2025-07-03","dueDate":"2026-07-03","planTerm":"875/38/15","mode":"YLY","premium":96462,"sa":30000000,"status":"In Force"},{"policyNo":"942182008","name":"SANKET ESHWAR BORA","mobile":"9673340654","doc":"2025-05-27","dueDate":"2026-11-27","planTerm":"875/40/15","mode":"HLY","premium":21183,"sa":20000000,"status":"In Force"},{"policyNo":"942179229","name":"SIDDARAM GURAPPA BHANDEKAR","mobile":"9527741717","doc":"2024-12-24","dueDate":"2025-12-24","planTerm":"736/25/16","mode":"YLY","premium":24836,"sa":500000,"status":"In Force"},{"policyNo":"937650616","name":"Vidya Shrirang Ranawade","mobile":"9822622345","doc":"2024-10-15","dueDate":"2025-01-15","planTerm":"745/62/15","mode":"MLY","premium":3475,"sa":500000,"status":"Lapsed without Surrender Value"},{"policyNo":"937650471","name":"SHRIRANG SUDAM RANAWADE","mobile":"9822622345","doc":"2024-09-28","dueDate":"2026-07-28","planTerm":"945/54/15","mode":"MLY","premium":3350,"sa":500000,"status":"In Force"},{"policyNo":"937648443","name":"TOUSIF YUNUS SHAIKH","mobile":"9767928623","doc":"2024-07-18","dueDate":"2026-07-18","planTerm":"945/69/25","mode":"MLY","premium":4969,"sa":1500000,"status":"In Force"},{"policyNo":"937648107","name":"ADARSH TUKARAM CHAUDHARI","mobile":"9765080808","doc":"2024-06-21","dueDate":"2026-07-21","planTerm":"945/81/15","mode":"MLY","premium":4206,"sa":625000,"status":"In Force"},{"policyNo":"937648125","name":"ADARSH TUKARAM CHAUDHARI","mobile":"9765080808","doc":"2024-06-21","dueDate":"2026-07-21","planTerm":"945/81/15","mode":"MLY","premium":4206,"sa":625000,"status":"In Force"},{"policyNo":"937643815","name":"Pruthviraj Sandeep Nimhan[la]","mobile":"9822079807","doc":"2024-01-05","dueDate":"2027-01-05","planTerm":"871/99/16","mode":"YLY","premium":70080,"sa":1200000,"status":"In Force"},{"policyNo":"937643636","name":"Lahu Kaluram Kakade","mobile":"9923402727","doc":"2023-12-28","dueDate":"2026-12-28","planTerm":"936/21/15","mode":"YLY","premium":44296,"sa":800000,"status":"In Force"},{"policyNo":"937641700","name":"Mandar Raghunath Chaphekar","mobile":"9881396422","doc":"2023-08-28","dueDate":"2026-08-28","planTerm":"955/16/16","mode":"YLY","premium":28836,"sa":5000000,"status":"In Force"},{"policyNo":"935102662","name":"Yallappa Gurasidappa Manjulkar","mobile":"9766025759","doc":"2023-05-02","dueDate":"2023-09-02","planTerm":"936/21/15","mode":"MLY","premium":2548,"sa":550000,"status":"Lapsed without Surrender Value"},{"policyNo":"935100610","name":"Sarika Khushalrao Andhare","mobile":"9623415003","doc":"2023-03-08","dueDate":"2027-03-08","planTerm":"945/59/15","mode":"YLY","premium":30054,"sa":375000,"status":"In Force"},{"policyNo":"935098186","name":"Shambhu Akshay Sutar[la]","mobile":"9130060707","doc":"2022-12-05","dueDate":"2026-12-05","planTerm":"934/25/20","mode":"YLY","premium":99198,"sa":2200000,"status":"In Force"},{"policyNo":"935096590","name":"ADITYA BHARAT KATORE[LA]","mobile":"9503013079","doc":"2022-09-06","dueDate":"2026-07-06","planTerm":"945/87/20","mode":"MLY","premium":5846,"sa":1250000,"status":"In Force"},{"policyNo":"935094453","name":"ADITYA RAKESH MORE[LA]","mobile":"7378822456","doc":"2022-06-16","dueDate":"2025-12-16","planTerm":"934/25/20","mode":"MLY","premium":1959,"sa":510000,"status":"In Force"},{"policyNo":"935094140","name":"PRANAV PRAMOD NIMHAN","mobile":"8805752544","doc":"2022-05-28","dueDate":"2027-05-28","planTerm":"945/77/20","mode":"YLY","premium":66386,"sa":1250000,"status":"In Force"},{"policyNo":"935094137","name":"PRANIT PRAMOD NIMHAN","mobile":"8805707115","doc":"2022-05-28","dueDate":"2027-05-28","planTerm":"945/79/20","mode":"YLY","premium":66449,"sa":1250000,"status":"In Force"},{"policyNo":"935094138","name":"PRAJESH SANDEEP NIMHAN[LA]","mobile":"9822079807","doc":"2022-05-28","dueDate":"2027-05-28","planTerm":"945/86/20","mode":"YLY","premium":68278,"sa":1250000,"status":"In Force"},{"policyNo":"929048819","name":"Manish Rajkumar Darda","mobile":"8956858755","doc":"2022-02-21","dueDate":"2027-02-21","planTerm":"933/25/22","mode":"YLY","premium":117799,"sa":2500000,"status":"In Force"},{"policyNo":"929045942","name":"NAVIN HARILAL PARAKH","mobile":"7798111818","doc":"2021-12-28","dueDate":"2026-07-28","planTerm":"943/20/20","mode":"MLY","premium":272,"sa":75000,"status":"In Force"},{"policyNo":"929045918","name":"CHAITANYA SEVAKRAM RANPISE","mobile":"9822303299","doc":"2021-12-28","dueDate":"2026-12-28","planTerm":"920/20/15","mode":"HLY","premium":16383,"sa":400000,"status":"In Force"},{"policyNo":"929045583","name":"Sangeeta Santosh Kedari","mobile":"9011097040","doc":"2021-12-15","dueDate":"2026-12-15","planTerm":"945/59/15","mode":"YLY","premium":26047,"sa":325000,"status":"In Force"},{"policyNo":"929045790","name":"Durva Nilesh Bandal(la)","mobile":"9503434344","doc":"2021-12-01","dueDate":"2025-06-01","planTerm":"934/25/20","mode":"HLY","premium":25270,"sa":1100000,"status":"Reduced Paid-up"},{"policyNo":"929041738","name":"ASHWINI VYANKATESH DAHIWAL","mobile":"9359325825","doc":"2021-07-12","dueDate":"2026-07-12","planTerm":"945/70/15","mode":"YLY","premium":49402,"sa":625000,"status":"In Force"},{"policyNo":"919736851","name":"MAKARAND TRIMBAK LOHOKARE","mobile":"9850814409","doc":"2021-01-13","dueDate":"2026-08-13","planTerm":"936/16/10","mode":"MLY","premium":1606,"sa":210000,"status":"In Force"},{"policyNo":"919735462","name":"Bhavesh Suresh Solanki","mobile":"9822089129","doc":"2020-11-25","dueDate":"2026-11-25","planTerm":"936/25/16","mode":"YLY","premium":47722,"sa":1000000,"status":"In Force"},{"policyNo":"919735463","name":"Pinkee Rewatiprasad Malviya","mobile":"7770300140","doc":"2020-11-25","dueDate":"2026-11-25","planTerm":"936/16/10","mode":"YLY","premium":50161,"sa":590000,"status":"In Force"},{"policyNo":"917884201","name":"Dnyaneshwar Shivaji Balwadkar","mobile":"7028767785","doc":"2020-01-28","dueDate":"2020-03-28","planTerm":"836/21/15","mode":"MLY","premium":4804,"sa":1000000,"status":"Lapsed without Surrender Value"},{"policyNo":"917883610","name":"Sapna Anand Parakh","mobile":"9890634653","doc":"2020-01-23","dueDate":"2020-01-23","planTerm":"817/15/1","mode":"SGL","premium":78425,"sa":125000,"status":"Surrendered"},{"policyNo":"917883609","name":"Anand Harilal Parakh","mobile":"9011396422","doc":"2020-01-23","dueDate":"2020-01-23","planTerm":"817/15/1","mode":"SGL","premium":79644,"sa":125000,"status":"Surrendered"},{"policyNo":"917884742","name":"Sachin Sadashiv Jagtap","mobile":"9881556601","doc":"2020-01-13","dueDate":"2024-01-13","planTerm":"833/25/22","mode":"HLY","premium":12091,"sa":500000,"status":"Reduced Paid-up"},{"policyNo":"917884200","name":"GULAB DHARMA PAWAR","mobile":"9975745696","doc":"2020-01-05","dueDate":"2026-07-05","planTerm":"845/57/15","mode":"MLY","premium":2042,"sa":300000,"status":"In Force"},{"policyNo":"917883583","name":"SHIV NARSINGH RANMALE(LA)","mobile":"8605644444","doc":"2020-01-02","dueDate":"2026-07-02","planTerm":"845/94/25","mode":"HLY","premium":11938,"sa":625000,"status":"In Force"},{"policyNo":"917882224","name":"Akash Pandurang Sutar","mobile":"9767700070","doc":"2019-11-27","dueDate":"2026-11-27","planTerm":"833/21/18","mode":"YLY","premium":107402,"sa":2050000,"status":"In Force"},{"policyNo":"917881084","name":"ABDUL KADIR GULAM MOHAMMAD SHAIKH","mobile":"9823787086","doc":"2019-11-25","dueDate":"2026-07-25","planTerm":"836/21/15","mode":"MLY","premium":1917,"sa":400000,"status":"In Force"},{"policyNo":"906835019","name":"Anand Harilal Parakh","mobile":"9011396422","doc":"2019-10-18","dueDate":"2026-10-18","planTerm":"855/25/15","mode":"YLY","premium":21250,"sa":2500000,"status":"In Force"},{"policyNo":"906830720","name":"Vaishnav Nivrutti Saykar","mobile":"9767463171","doc":"2019-03-28","dueDate":"2027-03-28","planTerm":"820/20/15","mode":"YLY","premium":15138,"sa":200000,"status":"In Force"},{"policyNo":"906830796","name":"Vedant Nivrutti Saykar {la]","mobile":"9881348583","doc":"2019-03-28","dueDate":"2027-03-28","planTerm":"820/20/15","mode":"YLY","premium":14859,"sa":200000,"status":"In Force"},{"policyNo":"906830577","name":"Akshay Vijaychand Bora","mobile":"9503927976","doc":"2019-03-25","dueDate":"2026-09-25","planTerm":"833/25/22","mode":"HLY","premium":11447,"sa":500000,"status":"In Force"},{"policyNo":"906829972","name":"Bhoomi Yogesh Mandlecha {la]","mobile":"9422518784","doc":"2019-03-12","dueDate":"2019-03-12","planTerm":"817/18/1","mode":"SGL","premium":37651,"sa":65000,"status":"Single Premium"},{"policyNo":"906829971","name":"Alisha Yogesh Mandlecha {la}","mobile":"9422518784","doc":"2019-03-12","dueDate":"2019-03-12","planTerm":"817/16/1","mode":"SGL","premium":43330,"sa":70000,"status":"Single Premium"},{"policyNo":"906829264","name":"Narsing Vitthalrao Ranmale","mobile":"8605964444","doc":"2019-01-22","dueDate":"2027-01-22","planTerm":"823/22/22","mode":"YLY","premium":13000,"sa":4000000,"status":"In Force"},{"policyNo":"906828171","name":"Anand Harilal Parakh","mobile":"9011396422","doc":"2018-12-28","dueDate":"2018-12-28","planTerm":"817/15/1","mode":"SGL","premium":79450,"sa":125000,"status":"Surrendered"},{"policyNo":"906828170","name":"Sapna Anand Parakh","mobile":"9890634653","doc":"2018-12-28","dueDate":"2018-12-28","planTerm":"817/15/1","mode":"SGL","premium":78350,"sa":125000,"status":"Surrendered"},{"policyNo":"906827850","name":"TISHA RAHUL SHARMA (L.A.)","mobile":"8055772591","doc":"2018-12-05","dueDate":"2026-07-05","planTerm":"834/25/20","mode":"MLY","premium":3097,"sa":800000,"status":"In Force"},{"policyNo":"999579776","name":"SHEKHAR DATTUSINGH PARDESHI","mobile":"7057887038","doc":"2017-08-28","dueDate":"2026-07-28","planTerm":"841/20/12","mode":"MLY","premium":3340,"sa":500000,"status":"In Force"},{"policyNo":"999579236","name":"Shivay Onkar Nimhan [l.a]","mobile":"9561890909","doc":"2017-08-02","dueDate":"2026-08-02","planTerm":"834/25/20","mode":"HLY","premium":21270,"sa":1000000,"status":"In Force"},{"policyNo":"999578388","name":"TANAYA RAMESH SUTAR","mobile":"9890872020","doc":"2017-06-09","dueDate":"2026-06-09","planTerm":"836/16/10","mode":"YLY","premium":16670,"sa":200000,"status":"Fully Paid-up"},{"policyNo":"999155465","name":"NARSINGH VITTHAL RANMALE","mobile":"8605644444","doc":"2017-05-15","dueDate":"2026-05-15","planTerm":"833/22/19","mode":"YLY","premium":25314,"sa":500000,"status":"In Force"},{"policyNo":"919735463","name":"Tanvi Shashikant Kedari","mobile":"9765487616","doc":"2017-05-15","dueDate":"2018-05-15","planTerm":"936/16/11","mode":"YLY","premium":50161,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"919735462","name":"Manvi Shashikant Kedari","mobile":"9765487616","doc":"2017-05-15","dueDate":"2018-05-15","planTerm":"936/18/13","mode":"YLY","premium":47722,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"999155464","name":"Shashikant Sudam Kedari","mobile":"9765487616","doc":"2017-05-15","dueDate":"2019-05-15","planTerm":"843/16/16","mode":"YLY","premium":9600,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"999155461","name":"Vidya Shashikant Kedari","mobile":"9765487616","doc":"2017-05-15","dueDate":"2019-05-15","planTerm":"844/17/17","mode":"YLY","premium":8806,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"999155463","name":"Tanvi Shashikant Kedari","mobile":"9765487616","doc":"2017-05-15","dueDate":"2018-05-15","planTerm":"834/16/11","mode":"YLY","premium":16266,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"999155462","name":"Manvi Shashikant Kedari","mobile":"9765487616","doc":"2017-05-15","dueDate":"2018-05-15","planTerm":"834/18/13","mode":"YLY","premium":13482,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"999148117","name":"Shivraj Popat Tarate","mobile":"9604333679","doc":"2016-05-15","dueDate":"2016-10-15","planTerm":"833/25/22","mode":"MLY","premium":2892,"sa":750000,"status":"Lapsed without Surrender Value"},{"policyNo":"999144322","name":"Lahu Kaluram Kakade","mobile":"9923402727","doc":"2015-12-28","dueDate":"2023-12-28","planTerm":"830/21/8","mode":"YLY","premium":28037,"sa":350000,"status":"Fully Paid-up"},{"policyNo":"999144476","name":"Anand Harilal Parakh","mobile":"9011396422","doc":"2015-12-28","dueDate":"2026-12-28","planTerm":"827/20/20","mode":"YLY","premium":3818,"sa":100000,"status":"In Force"},{"policyNo":"999144301","name":"Amol Harilal Parakh","mobile":"9890328005","doc":"2015-12-28","dueDate":"2026-12-28","planTerm":"827/20/20","mode":"YLY","premium":3725,"sa":100000,"status":"In Force"},{"policyNo":"999144321","name":"Durva Lahu Kakade","mobile":"","doc":"2015-12-28","dueDate":"2026-12-28","planTerm":"834/22/17","mode":"YLY","premium":11385,"sa":230000,"status":"In Force"},{"policyNo":"999144300","name":"Sahil Anand Parakh (l.a.)","mobile":"8805475756","doc":"2015-12-28","dueDate":"2026-12-28","planTerm":"827/20/20","mode":"YLY","premium":3464,"sa":100000,"status":"In Force"},{"policyNo":"999144482","name":"Sapna Anand Parakh","mobile":"9890635643","doc":"2015-12-28","dueDate":"2026-12-28","planTerm":"827/20/20","mode":"YLY","premium":3607,"sa":100000,"status":"In Force"},{"policyNo":"999144375","name":"Avinash Digambar Kulkarni","mobile":"9822203187","doc":"2015-12-28","dueDate":"2026-12-28","planTerm":"827/15/15","mode":"YLY","premium":5469,"sa":100000,"status":"In Force"},{"policyNo":"999144374","name":"Anup Jayant Joshi","mobile":"9028699236","doc":"2015-12-28","dueDate":"2016-12-28","planTerm":"827/15/15","mode":"HLY","premium":2762,"sa":100000,"status":"Lapsed without Surrender Value"},{"policyNo":"999144302","name":"Mayank Anand Parakh","mobile":"","doc":"2015-12-28","dueDate":"2026-12-28","planTerm":"827/20/20","mode":"YLY","premium":3445,"sa":100000,"status":"In Force"},{"policyNo":"999143684","name":"Swapnil Jaychand Bora","mobile":"9922070545","doc":"2015-12-02","dueDate":"2023-12-02","planTerm":"830/16/8","mode":"YLY","premium":29536,"sa":300000,"status":"Fully Paid-up"},{"policyNo":"999137140","name":"Amar Gajanan Jadhav","mobile":"9923799565","doc":"2015-03-04","dueDate":"2018-09-04","planTerm":"815/22/22","mode":"HLY","premium":20209,"sa":750000,"status":"Surrendered"},{"policyNo":"999136680","name":"Prajesh Sandeep Nimhan","mobile":"","doc":"2015-02-18","dueDate":"2015-02-18","planTerm":"817/18/1","mode":"SGL","premium":302087,"sa":550000,"status":"Single Premium"},{"policyNo":"990409954","name":"Vickykumar Rameshlalji Sancheti","mobile":"9503444433","doc":"2014-12-28","dueDate":"2015-01-28","planTerm":"814/31/31","mode":"MLY","premium":657,"sa":250000,"status":"Lapsed without Surrender Value"},{"policyNo":"990409952","name":"Shashank Shivlng Bagde","mobile":"","doc":"2014-12-28","dueDate":"2016-12-28","planTerm":"814/20/20","mode":"HLY","premium":2780,"sa":100000,"status":"Lapsed without Surrender Value"},{"policyNo":"990409953","name":"Navin Hiralal Parakh","mobile":"9158858885","doc":"2014-12-28","dueDate":"2015-03-28","planTerm":"827/20/20","mode":"QLY","premium":974,"sa":100000,"status":"Lapsed without Surrender Value"},{"policyNo":"990409758","name":"TARUN VIJAY GALANI","mobile":"9975895728","doc":"2014-12-22","dueDate":"2026-06-22","planTerm":"827/20/20","mode":"HLY","premium":3429,"sa":200000,"status":"In Force"},{"policyNo":"990409757","name":"GAURAV VIJAY GALANI","mobile":"9970146685","doc":"2014-12-22","dueDate":"2026-12-22","planTerm":"827/20/20","mode":"HLY","premium":3419,"sa":200000,"status":"In Force"},{"policyNo":"990409741","name":"Shravi Avinash Barne [la]","mobile":"","doc":"2014-12-20","dueDate":"2014-12-20","planTerm":"817/18/1","mode":"SGL","premium":56125,"sa":100000,"status":"Single Premium"},{"policyNo":"990409740","name":"Avinash Lala Barne","mobile":"9850868152","doc":"2014-12-17","dueDate":"2016-12-17","planTerm":"814/15/15","mode":"YLY","premium":18188,"sa":260000,"status":"Lapsed without Surrender Value"},{"policyNo":"990409743","name":"Aryan Avinash Barne [la]","mobile":"","doc":"2014-12-17","dueDate":"2016-12-17","planTerm":"814/17/17","mode":"YLY","premium":11654,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"990408680","name":"Shree Narendra Ranpise La","mobile":"9423500669","doc":"2014-11-10","dueDate":"2019-05-10","planTerm":"814/16/16","mode":"HLY","premium":9516,"sa":300000,"status":"Surrendered"},{"policyNo":"990408681","name":"Dhananjay Narendra Ranpise La","mobile":"8055378333","doc":"2014-11-10","dueDate":"2019-05-10","planTerm":"814/16/16","mode":"HLY","premium":9486,"sa":300000,"status":"Surrendered"},{"policyNo":"990408719","name":"Smruti Narendra Ranpise","mobile":"8055378333","doc":"2014-11-10","dueDate":"2019-05-10","planTerm":"814/16/16","mode":"HLY","premium":9799,"sa":300000,"status":"Surrendered"},{"policyNo":"990408682","name":"Narendra Sevakram Ranpise","mobile":"","doc":"2014-11-10","dueDate":"2019-05-10","planTerm":"814/16/16","mode":"HLY","premium":9941,"sa":300000,"status":"Death Claim"},{"policyNo":"990406086","name":"VIJAY VASANT BHOSALE","mobile":"9823239990","doc":"2014-06-28","dueDate":"2026-05-28","planTerm":"820/20/15","mode":"MLY","premium":4831,"sa":750000,"status":"In Force"},{"policyNo":"990400826","name":"ADITYA GAUTAM BORA","mobile":"","doc":"2013-12-28","dueDate":"2026-12-28","planTerm":"102/15/15","mode":"HLY","premium":1673,"sa":50000,"status":"In Force"},{"policyNo":"990400827","name":"TANMAY GAUTAM BORA (L.A.)","mobile":"","doc":"2013-12-28","dueDate":"2026-12-28","planTerm":"102/15/15","mode":"HLY","premium":1673,"sa":50000,"status":"In Force"},{"policyNo":"990400824","name":"Sakshi Balu Chakranarayan","mobile":"","doc":"2013-12-28","dueDate":"2015-12-28","planTerm":"102/15/15","mode":"YLY","premium":6491,"sa":100000,"status":"Lapsed without Surrender Value"},{"policyNo":"990400825","name":"Sapna Anand Parakh","mobile":"9999888888","doc":"2013-12-28","dueDate":"2026-12-28","planTerm":"165/21/21","mode":"YLY","premium":12010,"sa":250000,"status":"In Force"},{"policyNo":"990401005","name":"Vijaya Ramesh Sutar","mobile":"","doc":"2013-12-27","dueDate":"2026-12-27","planTerm":"165/22/22","mode":"YLY","premium":6005,"sa":125000,"status":"In Force"},{"policyNo":"990401006","name":"Ramesh Uttam Sutar","mobile":"","doc":"2013-12-27","dueDate":"2026-12-27","planTerm":"165/22/22","mode":"YLY","premium":6005,"sa":125000,"status":"In Force"},{"policyNo":"990400255","name":"Tarun Vijay Galani","mobile":"9975895728","doc":"2013-12-27","dueDate":"2026-12-27","planTerm":"165/20/20","mode":"YLY","premium":4804,"sa":100000,"status":"In Force"},{"policyNo":"990400253","name":"Gaurav Vijay Galani","mobile":"9970146685","doc":"2013-12-27","dueDate":"2026-12-27","planTerm":"165/20/20","mode":"YLY","premium":4804,"sa":100000,"status":"In Force"},{"policyNo":"990388206","name":"Praveen Shantaveerappa Kittur","mobile":"9822021166","doc":"2013-09-05","dueDate":"2023-09-05","planTerm":"165/20/20","mode":"YLY","premium":24020,"sa":500000,"status":"Surrendered"},{"policyNo":"990386353","name":"Anuradha Manoj Shinde","mobile":"","doc":"2013-08-06","dueDate":"2014-08-06","planTerm":"165/25/25","mode":"YLY","premium":6005,"sa":125000,"status":"Lapsed without Surrender Value"},{"policyNo":"990384425","name":"SACHIN TUKARAM JADHAV","mobile":"9881508902","doc":"2013-06-24","dueDate":"2026-12-24","planTerm":"165/24/24","mode":"HLY","premium":4852,"sa":200000,"status":"In Force"},{"policyNo":"990384427","name":"SUHAS TUKARAM JADHAV","mobile":"9371056076","doc":"2013-06-24","dueDate":"2026-12-24","planTerm":"165/27/27","mode":"HLY","premium":6065,"sa":250000,"status":"In Force"},{"policyNo":"990377086","name":"Rutuja Harishchandra Shinde","mobile":"9112300362","doc":"2012-12-28","dueDate":"2026-12-28","planTerm":"102/15/15","mode":"YLY","premium":6486,"sa":100000,"status":"In Force"},{"policyNo":"990377087","name":"Hrutik Harishchandra Shinde","mobile":"7038829747","doc":"2012-12-28","dueDate":"2026-12-28","planTerm":"165/15/15","mode":"YLY","premium":4704,"sa":100000,"status":"In Force"},{"policyNo":"990377031","name":"Smita Avinash Barne","mobile":"","doc":"2012-12-28","dueDate":"2016-12-28","planTerm":"165/27/27","mode":"YLY","premium":19216,"sa":400000,"status":"Reduced Paid-up"},{"policyNo":"990376420","name":"Rajesh Baburao Sherkhane","mobile":"9890097514","doc":"2012-12-12","dueDate":"2026-12-12","planTerm":"164/25/25","mode":"YLY","premium":2044,"sa":500000,"status":"In Force"},{"policyNo":"990376419","name":"Rajesh Baburao Sherkhane","mobile":"9890097514","doc":"2012-12-12","dueDate":"2026-12-12","planTerm":"165/29/29","mode":"YLY","premium":10809,"sa":225000,"status":"In Force"},{"policyNo":"990376392","name":"Rohini Sudhir Chimte","mobile":"8329758947","doc":"2012-12-12","dueDate":"2017-12-12","planTerm":"165/30/30","mode":"YLY","premium":9608,"sa":200000,"status":"Surrendered"},{"policyNo":"990376397","name":"Sudhir Santu Chimte","mobile":"8329758947","doc":"2012-12-12","dueDate":"2017-12-12","planTerm":"165/23/23","mode":"YLY","premium":9608,"sa":200000,"status":"Surrendered"},{"policyNo":"990376393","name":"Nil Vijay Bhusare","mobile":"","doc":"2012-12-12","dueDate":"2013-12-12","planTerm":"102/24/24","mode":"YLY","premium":3799,"sa":100000,"status":"Lapsed without Surrender Value"},{"policyNo":"990095225","name":"SUVARNA TUKARAM JADHAV","mobile":"","doc":"2012-06-19","dueDate":"2027-06-19","planTerm":"165/23/23","mode":"YLY","premium":14412,"sa":300000,"status":"In Force"},{"policyNo":"990094426","name":"Vijay Eknath Bhusare.","mobile":"","doc":"2012-05-19","dueDate":"2013-11-19","planTerm":"165/20/20","mode":"HLY","premium":7278,"sa":300000,"status":"Lapsed without Surrender Value"},{"policyNo":"990094098","name":"AKSHAY VIJAYCHAND BORA","mobile":"9503927976","doc":"2012-05-07","dueDate":"2027-06-20","planTerm":"165/35/35","mode":"HLY","premium":12130,"sa":500000,"status":"In Force"},{"policyNo":"990094100","name":"Jaychand Mohanlal Bora","mobile":"9850713516","doc":"2012-05-07","dueDate":"2012-05-07","planTerm":"189/0/1","mode":"SGL","premium":50000,"sa":0,"status":"Single Premium"},{"policyNo":"990089915","name":"Sachin Sadashiv Thorbole","mobile":"","doc":"2012-02-27","dueDate":"2014-02-27","planTerm":"165/21/21","mode":"YLY","premium":6005,"sa":125000,"status":"Lapsed without Surrender Value"},{"policyNo":"990089916","name":"Manisha Sachin Thorbole.","mobile":"","doc":"2012-02-27","dueDate":"2014-02-27","planTerm":"165/21/21","mode":"YLY","premium":6005,"sa":125000,"status":"Lapsed without Surrender Value"},{"policyNo":"990086777","name":"Vishal Prakash Darda","mobile":"9923039340","doc":"2011-12-27","dueDate":"2021-12-27","planTerm":"165/20/20","mode":"YLY","premium":3002,"sa":62500,"status":"Surrendered"},{"policyNo":"990086171","name":"Santosh Sudam Kedari.","mobile":"9970528122","doc":"2011-12-14","dueDate":"2026-12-14","planTerm":"165/15/15","mode":"YLY","premium":4804,"sa":100000,"status":"Fully Paid-up"},{"policyNo":"990086173","name":"Sangeeta Santosh Kedari.","mobile":"","doc":"2011-12-14","dueDate":"2026-12-14","planTerm":"165/15/15","mode":"YLY","premium":4804,"sa":100000,"status":"Fully Paid-up"},{"policyNo":"990086025","name":"RAJESH BABURAO SHERKHANE","mobile":"9890097514","doc":"2011-12-10","dueDate":"2026-06-10","planTerm":"165/20/20","mode":"HLY","premium":6065,"sa":250000,"status":"In Force"},{"policyNo":"990085813","name":"Radha Narsingh Ranmalle [la]","mobile":"","doc":"2011-12-05","dueDate":"2012-06-05","planTerm":"178/99/20","mode":"HLY","premium":4973,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"990085812","name":"Narsingh Vitthal Ranmalle","mobile":"","doc":"2011-12-05","dueDate":"2012-06-05","planTerm":"165/20/20","mode":"HLY","premium":4852,"sa":200000,"status":"Lapsed without Surrender Value"},{"policyNo":"990084817","name":"ARJUN PRITAM PATIL .","mobile":"7798111818","doc":"2011-11-11","dueDate":"2026-11-11","planTerm":"102/18/18","mode":"HLY","premium":5257,"sa":200000,"status":"In Force"},{"policyNo":"990084814","name":"Pritam Ranjan Patil","mobile":"","doc":"2011-11-11","dueDate":"2012-11-11","planTerm":"165/16/16","mode":"HLY","premium":6065,"sa":250000,"status":"Lapsed without Surrender Value"},{"policyNo":"990084816","name":"PRISHA PRITAM PATIL","mobile":"","doc":"2011-11-11","dueDate":"2026-05-11","planTerm":"102/15/15","mode":"","premium":6493,"sa":0,"status":"In Force"},{"policyNo":"990079776","name":"Rahul Gangaram Zende","mobile":"","doc":"2011-06-11","dueDate":"2011-06-11","planTerm":"841/20/1","mode":"SGL","premium":3340,"sa":65000,"status":"In Force"},{"policyNo":"990079776","name":"Rahul Gangaram Zende","mobile":"","doc":"2011-06-11","dueDate":"2011-06-11","planTerm":"802/20/1","mode":"SGL","premium":50000,"sa":65000,"status":"Single Premium"},{"policyNo":"990078958","name":"Sunil Atmaram Dahiwal","mobile":"8788627636","doc":"2011-04-26","dueDate":"2027-04-26","planTerm":"164/17/17","mode":"YLY","premium":6407,"sa":800000,"status":"In Force"},{"policyNo":"990078959","name":"SUNIL ATMARAM DAHIWAL","mobile":"8788627636","doc":"2011-04-26","dueDate":"2027-04-26","planTerm":"165/17/17","mode":"YLY","premium":9007,"sa":187500,"status":"In Force"},{"policyNo":"990077120","name":"Usha Avinash Chondhe","mobile":"8999913110","doc":"2011-03-31","dueDate":"2011-03-31","planTerm":"804/10/1","mode":"SGL","premium":100000,"sa":125000,"status":"Matured"},{"policyNo":"990069989","name":"Pandurang Bhagwan Sutar.","mobile":"","doc":"2010-11-19","dueDate":"2017-11-19","planTerm":"803/10/10","mode":"YLY","premium":100000,"sa":0,"status":"Surrendered"},{"policyNo":"990069988","name":"Pandurang Bhagwan Sutar","mobile":"","doc":"2010-11-19","dueDate":"2012-02-19","planTerm":"14/30/30","mode":"QLY","premium":1575,"sa":150000,"status":"Lapsed without Surrender Value"},{"policyNo":"990070154","name":"Aakash Pandurang Sutar [la]","mobile":"9767700070","doc":"2010-11-18","dueDate":"2026-11-18","planTerm":"165/20/20","mode":"YLY","premium":23520,"sa":500000,"status":"In Force"},{"policyNo":"990070156","name":"Akshay Pandurang Sutar [la]","mobile":"9767700070","doc":"2010-11-18","dueDate":"2026-11-18","planTerm":"165/20/20","mode":"YLY","premium":23520,"sa":500000,"status":"In Force"},{"policyNo":"990070069","name":"Ganesh Subhash Kundapurkar","mobile":"7030267877","doc":"2010-11-06","dueDate":"2021-11-06","planTerm":"165/20/20","mode":"YLY","premium":12010,"sa":250000,"status":"Surrendered"},{"policyNo":"990070068","name":"Ganesh Subhash Kundapurkar","mobile":"9158007877","doc":"2010-10-25","dueDate":"2026-10-25","planTerm":"164/20/20","mode":"YLY","premium":6386,"sa":1000000,"status":"In Force"},{"policyNo":"990068159","name":"Hemant Vasant Pardeshi","mobile":"","doc":"2010-09-20","dueDate":"2020-09-20","planTerm":"165/25/25","mode":"HLY","premium":9097,"sa":375000,"status":"Surrendered"},{"policyNo":"990065141","name":"Sandeep Bharat Shinde","mobile":"9850558411","doc":"2010-07-06","dueDate":"2027-07-06","planTerm":"165/25/25","mode":"YLY","premium":24020,"sa":500000,"status":"In Force"},{"policyNo":"990062559","name":"Jaidev Digambar Bharti","mobile":"9822838811","doc":"2010-05-05","dueDate":"2011-05-05","planTerm":"801/8/3","mode":"YLY","premium":20000,"sa":100000,"status":"Foreclosed"},{"policyNo":"990062225","name":"Rajesh Madhav Jagtap","mobile":"8149372502","doc":"2010-04-27","dueDate":"2015-04-27","planTerm":"191/22/22","mode":"YLY","premium":10000,"sa":0,"status":"Foreclosed"},{"policyNo":"990062227","name":"Rajesh Madhav Jagtap","mobile":"8149372502","doc":"2010-04-27","dueDate":"2015-04-27","planTerm":"191/22/22","mode":"YLY","premium":10000,"sa":0,"status":"Foreclosed"},{"policyNo":"990062226","name":"Rajesh Madhav Jagtap","mobile":"8149372502","doc":"2010-04-27","dueDate":"2015-04-27","planTerm":"191/22/22","mode":"YLY","premium":10000,"sa":0,"status":"Foreclosed"},{"policyNo":"990062130","name":"Smita Rajesh Jagtap","mobile":"8149372502","doc":"2010-04-23","dueDate":"2015-04-23","planTerm":"191/22/22","mode":"YLY","premium":10000,"sa":0,"status":"Foreclosed"},{"policyNo":"990062127","name":"Smita Rajesh Jagtap","mobile":"8149372502","doc":"2010-04-23","dueDate":"2015-04-23","planTerm":"191/22/22","mode":"YLY","premium":10000,"sa":0,"status":"Foreclosed"},{"policyNo":"990062131","name":"Smita Rajesh Jagtap","mobile":"8149372502","doc":"2010-04-23","dueDate":"2015-04-23","planTerm":"191/22/22","mode":"YLY","premium":10000,"sa":0,"status":"Foreclosed"},{"policyNo":"990062129","name":"Smita Rajesh Jagtap","mobile":"8149372502","doc":"2010-04-23","dueDate":"2015-04-23","planTerm":"191/22/22","mode":"YLY","premium":10000,"sa":0,"status":"Foreclosed"},{"policyNo":"990058675","name":"Raju Ramchandra Nimhan","mobile":"9822917988","doc":"2010-03-20","dueDate":"2010-03-20","planTerm":"801/8/1","mode":"SGL","premium":50000,"sa":65000,"status":"Matured"},{"policyNo":"990056902","name":"Vyankatesh Tulshidas Dahiwal","mobile":"9764826736","doc":"2010-02-23","dueDate":"2012-02-23","planTerm":"194/24/24","mode":"YLY","premium":24000,"sa":600000,"status":"Surrendered"},{"policyNo":"990055099","name":"Shekhar Dattusingh Pardeshi","mobile":"7709044406","doc":"2010-01-18","dueDate":"2027-01-18","planTerm":"165/24/24","mode":"HLY","premium":6065,"sa":250000,"status":"In Force"},{"policyNo":"990052857","name":"Shreyas Srinivas Murthy","mobile":"9922554999","doc":"2009-12-14","dueDate":"2010-12-14","planTerm":"191/20/20","mode":"YLY","premium":100000,"sa":0,"status":"Foreclosed"},{"policyNo":"990052858","name":"Sangita Srinivas Murthy","mobile":"","doc":"2009-12-14","dueDate":"2013-12-14","planTerm":"191/15/15","mode":"YLY","premium":100000,"sa":0,"status":"Surrendered"},{"policyNo":"990052990","name":"Ravindra Balkrishna More","mobile":"","doc":"2009-12-14","dueDate":"2011-06-14","planTerm":"164/24/24","mode":"HLY","premium":2832,"sa":700000,"status":"Lapsed without Surrender Value"},{"policyNo":"990051946","name":"Paresh Ramesh Nimhan","mobile":"","doc":"2009-11-25","dueDate":"2011-11-25","planTerm":"165/20/20","mode":"HLY","premium":9097,"sa":375000,"status":"Lapsed without Surrender Value"},{"policyNo":"990050910","name":"Anand Harilal Parakh","mobile":"9011396422","doc":"2009-10-28","dueDate":"2026-10-28","planTerm":"165/20/20","mode":"YLY","premium":16814,"sa":350000,"status":"In Force"},{"policyNo":"990050422","name":"Arjun Ganpat Jadhav","mobile":"9881144880","doc":"2009-10-20","dueDate":"2012-10-20","planTerm":"191/27/27","mode":"HLY","premium":10000,"sa":0,"status":"Surrendered"},{"policyNo":"955398738","name":"Ganesh Balkrishna Shetty","mobile":"9420639399","doc":"2009-09-09","dueDate":"2019-09-09","planTerm":"165/20/20","mode":"YLY","premium":18015,"sa":375000,"status":"Surrendered"},{"policyNo":"955397493","name":"Asha Raju Nimhan","mobile":"","doc":"2009-08-04","dueDate":"2009-08-04","planTerm":"191/20/1","mode":"SGL","premium":50000,"sa":0,"status":"Surrendered"},{"policyNo":"955397494","name":"Raju Ramchandra Nimhan","mobile":"","doc":"2009-08-04","dueDate":"2009-08-04","planTerm":"191/20/1","mode":"SGL","premium":50000,"sa":0,"status":"Surrendered"},{"policyNo":"955397476","name":"Kartik Raju Nimhan","mobile":"","doc":"2009-08-03","dueDate":"2009-08-03","planTerm":"188/20/1","mode":"SGL","premium":50000,"sa":65000,"status":"Surrendered"},{"policyNo":"955397472","name":"Raju Ramchandra Nimhan","mobile":"","doc":"2009-08-03","dueDate":"2009-08-03","planTerm":"191/20/1","mode":"SGL","premium":50000,"sa":0,"status":"Surrendered"},{"policyNo":"955396786","name":"Rajesh Baburao Sherkhane","mobile":"","doc":"2009-07-20","dueDate":"2009-07-20","planTerm":"191/23/1","mode":"SGL","premium":50000,"sa":50000,"status":"Surrendered"},{"policyNo":"955396447","name":"Miss.Namrata Raju Nimhan La","mobile":"","doc":"2009-07-07","dueDate":"2009-07-07","planTerm":"188/20/1","mode":"SGL","premium":50000,"sa":65000,"status":"Surrendered"},{"policyNo":"955396446","name":"Raju Ramchandra Nimhan","mobile":"","doc":"2009-07-07","dueDate":"2009-07-07","planTerm":"191/20/1","mode":"SGL","premium":50000,"sa":0,"status":"Surrendered"},{"policyNo":"955394445","name":"Gorakhnath Changdev Chandgude","mobile":"9325400469","doc":"2009-04-27","dueDate":"2024-04-27","planTerm":"165/15/15","mode":"HLY","premium":3032,"sa":125000,"status":"Matured"},{"policyNo":"955381939","name":"Anand Harilal Parakh","mobile":"9011396422","doc":"2008-12-26","dueDate":"2008-12-26","planTerm":"191/30/1","mode":"SGL","premium":25000,"sa":25000,"status":"Surrendered"},{"policyNo":"955381784","name":"Abhijeet Avinash Shete","mobile":"","doc":"2008-12-22","dueDate":"2017-09-22","planTerm":"165/35/35","mode":"QLY","premium":1531,"sa":125000,"status":"Foreclosed"},{"policyNo":"955381113","name":"Rajesh Madhav Jagtap","mobile":"8149372502","doc":"2008-12-02","dueDate":"2023-12-02","planTerm":"165/15/15","mode":"YLY","premium":15932,"sa":250000,"status":"Matured"},{"policyNo":"955379817","name":"Smita Rajesh Jagtap","mobile":"8149372502","doc":"2008-10-27","dueDate":"2014-10-27","planTerm":"901/27/27","mode":"YLY","premium":9000,"sa":0,"status":"Surrendered"},{"policyNo":"955381580","name":"Avinash Lala Barne","mobile":"9850868152","doc":"2008-08-25","dueDate":"2017-08-25","planTerm":"190/15/15","mode":"YLY","premium":12200,"sa":5000000,"status":"Lapsed without Surrender Value"},{"policyNo":"955377387","name":"Omkar Chintamani Bhagade","mobile":"9595423228","doc":"2008-08-12","dueDate":"2024-08-12","planTerm":"165/16/16","mode":"YLY","premium":5880,"sa":125000,"status":"Matured"},{"policyNo":"955377159","name":"Harshal Rajesh Jagtap [la]","mobile":"8149372502","doc":"2008-08-07","dueDate":"2013-08-07","planTerm":"188/20/5","mode":"YLY","premium":30000,"sa":300000,"status":"Fully Paid-up"},{"policyNo":"955377158","name":"Smita Rajesh Jagtap","mobile":"8149372502","doc":"2008-08-07","dueDate":"2013-08-07","planTerm":"188/20/5","mode":"YLY","premium":10000,"sa":100000,"status":"Fully Paid-up"},{"policyNo":"955376545","name":"Poonam Rahul Zende","mobile":"","doc":"2008-07-18","dueDate":"2008-07-18","planTerm":"188/20/1","mode":"SGL","premium":50000,"sa":65000,"status":"Single Premium"},{"policyNo":"955375784","name":"Atmaram Somnath Pandere","mobile":"9689117644","doc":"2008-06-20","dueDate":"2011-06-20","planTerm":"191/15/15","mode":"YLY","premium":30000,"sa":0,"status":"Foreclosed"},{"policyNo":"955371385","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"188/20/4","mode":"HLY","premium":75000,"sa":1500000,"status":"Surrendered"},{"policyNo":"955371353","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2012-09-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Foreclosed"},{"policyNo":"955371365","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":3000,"sa":0,"status":"Surrendered"},{"policyNo":"955371368","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":4500,"sa":0,"status":"Surrendered"},{"policyNo":"955371351","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2012-09-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Foreclosed"},{"policyNo":"955371350","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2012-09-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Foreclosed"},{"policyNo":"955371380","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":12500,"sa":0,"status":"Surrendered"},{"policyNo":"955371361","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371382","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":57500,"sa":0,"status":"Surrendered"},{"policyNo":"955371363","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371355","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371359","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371362","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371364","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":3000,"sa":0,"status":"Surrendered"},{"policyNo":"955371375","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":10000,"sa":0,"status":"Surrendered"},{"policyNo":"955371373","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":9000,"sa":0,"status":"Surrendered"},{"policyNo":"955371383","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":50000,"sa":0,"status":"Surrendered"},{"policyNo":"955371358","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371378","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":15000,"sa":0,"status":"Surrendered"},{"policyNo":"955371356","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371354","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371357","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":2500,"sa":0,"status":"Surrendered"},{"policyNo":"955371367","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":4000,"sa":0,"status":"Surrendered"},{"policyNo":"955371374","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":7000,"sa":0,"status":"Surrendered"},{"policyNo":"955371381","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":16500,"sa":0,"status":"Surrendered"},{"policyNo":"955371366","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":3500,"sa":0,"status":"Surrendered"},{"policyNo":"955371370","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":6000,"sa":0,"status":"Surrendered"},{"policyNo":"955371372","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":8000,"sa":0,"status":"Surrendered"},{"policyNo":"955371376","name":"Avinash Lala Barne","mobile":"","doc":"2008-03-19","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":10500,"sa":0,"status":"Surrendered"},{"policyNo":"955369142","name":"Apparao Shivaji Ghuge","mobile":"9529602342","doc":"2008-02-04","dueDate":"2008-02-04","planTerm":"188/20/1","mode":"SGL","premium":20000,"sa":25000,"status":"Surrendered"},{"policyNo":"955368612","name":"Vijaychand Mohanlal Bora","mobile":"9822373965","doc":"2008-01-25","dueDate":"2013-01-25","planTerm":"188/20/5","mode":"YLY","premium":10000,"sa":100000,"status":"Fully Paid-up"},{"policyNo":"955371352","name":"Avinash Lala Barne","mobile":"","doc":"","dueDate":"2012-09-19","planTerm":"191/44/44","mode":"HLY","premium":0,"sa":0,"status":"Foreclosed"},{"policyNo":"990062228","name":"Rajesh Madhav Jagtap","mobile":"","doc":"","dueDate":"2015-04-27","planTerm":"191/22/22","mode":"YLY","premium":0,"sa":0,"status":"Foreclosed"},{"policyNo":"990062128","name":"Smita Rajesh Jagtap","mobile":"","doc":"","dueDate":"2015-04-23","planTerm":"191/22/22","mode":"YLY","premium":0,"sa":0,"status":"Foreclosed"},{"policyNo":"955371360","name":"Avinash Lala Barne","mobile":"","doc":"","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":0,"sa":0,"status":"Surrendered"},{"policyNo":"955371371","name":"Avinash Lala Barne","mobile":"","doc":"","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":0,"sa":0,"status":"Surrendered"},{"policyNo":"955371377","name":"Avinash Lala Barne","mobile":"","doc":"","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":0,"sa":0,"status":"Surrendered"},{"policyNo":"955371379","name":"Avinash Lala Barne","mobile":"","doc":"","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":0,"sa":0,"status":"Surrendered"},{"policyNo":"955371384","name":"Avinash Lala Barne","mobile":"","doc":"","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":0,"sa":0,"status":"Surrendered"},{"policyNo":"955371369","name":"Avinash Lala Barne","mobile":"","doc":"","dueDate":"2011-03-19","planTerm":"191/44/44","mode":"HLY","premium":0,"sa":0,"status":"Surrendered"},{"policyNo":"955397473","name":"Asha Raju Nimhan","mobile":"","doc":"","dueDate":"2009-08-03","planTerm":"191/20/1","mode":"SGL","premium":0,"sa":0,"status":"Surrendered"}];
+const SEED_OWNER_AGENT_CODE = "1088995L";
+
+const THEME_COLORS = ["#1B3A6B","#8B1E3F","#1E6B4F","#7A4B12","#4B2E83","#0F5C6E"];
+
+const LS_AGENT = "licCrm_agent";
+const LS_POLICIES = "licCrm_policies";
+
+let state = {
+  agent: null,
+  policies: [],
+  currentScreen: "home",
+  lang: "mr"
+};
+</script>
+<script src="app.js"></script>
+</body>
+</html>
